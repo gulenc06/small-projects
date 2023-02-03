@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        body {
+            height: 100vh;
+            background: blue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .bilgiler {
+            position: absolute;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            font-family: Arial;
+            background: black;
+            padding: 40px;
+            animation: anim 5s linear;
+            animation-iteration-count: 1;
+            opacity: 0;
+
+        }
+
+        .bilgiler * {
+            text-align: center;
+        }
+
+
+        @keyframes anim {
+            0% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="oyun"></canvas>
+    <div class="bilgiler">
+        <h2>Multiplayer Snake !!!</h2>
+        <p>Arrow Keys for Player 1</p>
+        <p>W,A,S,D for Player 2</p>
+    </div>
+    <script>
+        var c = document.getElementById("oyun"); var cx = c.getContext("2d");
+        var px1, py1, ks1, ky1, px2, py2, ks2, ky2, hx1, hy1, hx2, hy2, yx, yy, ib, xm, ym, timer;
+        document.addEventListener("keydown", function (e) {
+
+            if (e.keyCode === 37 && hx1 !== 1) { hx1 = -1; hy1 = 0; }
+            if (e.keyCode === 38 && hy1 !== 1) { hx1 = 0; hy1 = -1; }
+            if (e.keyCode === 39 && hx1 !== -1) { hx1 = 1; hy1 = 0; }
+            if (e.keyCode === 40 && hy1 !== -1) { hx1 = 0; hy1 = 1; }
+
+            if ((e.keyCode === 65 || e.keyCode === 85) && hx2 !== 1) { hx2 = -1; hy2 = 0; }
+            if ((e.keyCode === 87 || e.keyCode === 71) && hy2 !== 1) { hx2 = 0; hy2 = -1; }
+            if ((e.keyCode === 68 || e.keyCode === 69) && hx2 !== -1) { hx2 = 1; hy2 = 0; }
+            if ((e.keyCode === 83 || e.keyCode === 219 || e.keyCode === 73) && hy2 !== -1) { hx2 = 0; hy2 = 1; }
+        });
+        function init() {
+            c.width = document.body.clientWidth;
+            c.height = document.body.clientHeight;
+            ib = 30; xm = Math.ceil(c.width / ib); ym = Math.ceil(c.height / ib);
+            px1 = Math.floor(xm / 2); py1 = Math.floor(ym * .25);
+            px2 = Math.floor(xm / 2); py2 = Math.floor(ym * .75);
+            hx1 = 1; hy1 = 0; hx2 = -1; hy2 = 0;
+            yx = Math.floor(xm / 2); yy = Math.floor(ym / 2);
+            ks1 = 5; ks2 = 5;
+            ky1 = []; ky2 = [];
+            timer = setInterval(loop, 100);
+        }
+        function reset1() {
+            px1 = Math.floor(xm / 2); py1 = Math.floor(ym * .25);
+            hx1 = 1; hy1 = 0;
+            ks1 = 5; ky1 = [];
+        }
+        function reset2() {
+            px2 = Math.floor(xm / 2); py2 = Math.floor(ym * .75);
+            hx2 = 1; hy2 = 0;
+            ks2 = 5; ky2 = [];
+        }
+        function loop() {
+            update();
+            draw();
+        }
+        function update() {
+            px1 += hx1; py1 += hy1; px2 += hx2; py2 += hy2;
+            if (px1 < 0) { px1 = xm - 1 }; if (px2 < 0) { px2 = xm - 1 }
+            if (py1 < 0) { py1 = ym - 1 }; if (py2 < 0) { py2 = ym - 1 }
+            if (px1 > xm - 1) { px1 = 0 }; if (px2 > xm - 1) { px2 = 0 }
+            if (py1 > ym - 1) { py1 = 0 }; if (py2 > ym - 1) { py2 = 0 }
+            ky1.forEach(k => { if (px2 === k.px && py2 === k.py) { reset2(); } });
+            ky2.forEach(k => { if (px1 === k.px && py1 === k.py) { reset1(); } });
+            ky1.push({ px: px1, py: py1 });
+            ky2.push({ px: px2, py: py2 });
+
+            while (ky1.length > ks1) { ky1.shift(); }
+            while (ky2.length > ks2) { ky2.shift(); }
+
+            if (yx === px1 && yy === py1) {
+                ks1++;
+                var ryx = Math.abs(Math.floor(Math.random() * xm - 8));
+                var ryy = Math.abs(Math.floor(Math.random() * ym - 8));
+                yx = 4 + ryx;
+                yy = 4 + ryy;
+            }
+            if (yx === px2 && yy === py2) {
+                ks2++;
+                var ryx = Math.abs(Math.floor(Math.random() * xm - 8));
+                var ryy = Math.abs(Math.floor(Math.random() * ym - 8));
+                yx = 4 + ryx;
+                yy = 4 + ryy;
+            }
+
+
+        }
+        function draw() {
+            cx.fillStyle = "#262626";
+            cx.fillRect(0, 0, c.width, c.height);
+            cx.shadowColor = "black";
+            cx.shadowBlur = 5;
+            cx.shadowOffsetX = 0;
+            cx.shadowOffsetY = 0;
+            cx.shadowColor = "rgba(0,0,0,.8)";
+            cx.fillStyle = "orange";
+            cx.font = "20px Arial"; cx.textAlign = "left";
+            cx.fillText("Puan : " + (ks2 - 5), 50, 40);
+            cx.fillStyle = "teal";
+            cx.font = "20px Arial"; cx.textAlign = "right";
+            cx.fillText("Puan : " + (ks1 - 5), c.width - 50, 40);
+            cx.fillStyle = "#005858";
+            ky1.forEach((k, i) => { if (i > ky1.length - 2) { cx.fillStyle = "teal"; }; cx.fillRect(k.px * ib, k.py * ib, ib - 2, ib - 2); });
+            cx.fillStyle = "goldenrod";
+            ky2.forEach((k, i) => { if (i > ky2.length - 2) { cx.fillStyle = "yellow"; }; cx.fillRect(k.px * ib, k.py * ib, ib - 2, ib - 2); });
+            cx.fillStyle = "red"; cx.beginPath();
+            cx.arc(yx * ib + (ib / 2), yy * ib + (ib / 2), ib * .40, 0, 2 * Math.PI, false); cx.fill();
+        }
+        window.onload = init();
+    </script>
+</body>
+
+</html>

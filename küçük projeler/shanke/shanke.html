@@ -1,0 +1,56 @@
+<center><canvas id ="oyun" width="800" height="600"></canvas></center>
+    <script>
+        var c = document.getElementById("oyun"); var cx = c.getContext("2d");
+        var px,py,hx,hy,yx,yy,ks,ky,ib,xm,ym,timer;
+        document.addEventListener("keydown",function(e){
+            console.log(e.keyCode);
+            if(e.keyCode===37 && hx !== 1 ){hx = -1;hy=0;}
+            if(e.keyCode===38 && hy !== 1 ){hx = 0;hy=-1;}
+            if(e.keyCode===39 && hx !== -1 ){hx = 1;hy=0;}
+            if(e.keyCode===40 && hy !== -1 ){hx = 0;hy=1;}
+        });
+        function init(){
+            ib = 20; xm=c.width/ib; ym=c.height/ib;
+            px = xm/2; py = ym/2;
+            hx = 1; hy = 0;
+            yx = 20; yy = 10;
+            ks = 5;
+            ky = [];
+            timer = setInterval(loop,100);
+        }
+        function reset(){
+            clearInterval(timer); 
+            init();
+        }
+        function loop(){
+            update();
+            draw();
+        }
+        function update(){
+            px += hx; py += hy;
+            if(px < 0){px = xm -1}
+            if(py < 0){py = ym -1}
+            if(px > xm-1){px = 0}
+            if(py > ym-1){py = 0}
+            ky.forEach(k => {if(px === k.px && py === k.py){reset();}});
+            ky.push({px:px,py:py});
+            while(ky.length > ks){ky.shift();}
+            if(yx === px && yy === py){
+                ks++;
+                yx = Math.floor(Math.random() * xm);
+                yy = Math.floor(Math.random() * ym);
+            }
+        }
+        function draw(){
+            cx.fillStyle="black";
+            cx.fillRect(0,0,c.width,c.height);
+            cx.fillStyle="white";
+            cx.font="20px Arial"; cx.textAlign="center";
+            cx.fillText("oyuncu: " + (ks - 5) , c.width/2,40);
+            cx.fillStyle="green";
+            ky.forEach(k=>{cx.fillRect(k.px * ib,k.py * ib,ib-2,ib-2);});
+            cx.fillStyle="brown"; cx.beginPath();
+            cx.arc(yx * ib + (ib/2),yy * ib + (ib/2), ib/2, 0, 2*Math.PI, false); cx.fill();
+        }
+        window.onload = init();
+    </script>

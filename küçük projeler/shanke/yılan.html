@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <title>Document</title>
+    <style type="text/css">
+        body {
+            background-color: #7EFFB2;
+            padding: 400px 700px;
+            height: 75px;
+            width: 500px;
+        }
+
+        .buton {
+            position: relative;
+            display: inline-block;
+            text-decoration: none;
+            text-transform: uppercase;
+            color: #fff;
+            outline: 2px solid #7EFFB2;
+            padding: 30px 60px;
+            overflow: hidden;
+            transition: color 2s;
+        }
+
+        .buton:hover {
+            color: #090909;
+            background-color: #00ff66;
+        }
+
+        .buton::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50px;
+            z-index: -1;
+            width: 150%;
+            height: 100%;
+            background-color: #7EFFB2;
+            transform: scaleX(0) skewX(35deg);
+            transform-origin: left;
+            transition: color 1s;
+        }
+
+        .buton:hover::before {
+            transform: scaleX(1) skewX(35deg);
+        }
+
+        .yazi {
+            text-align: center;
+        }
+
+        #app {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="shanke.html">
+        <button class="buton">single player</button>
+    </a>
+    <a href="shanke2.html">
+        <button class="buton">multiplayer</button>
+    </a>
+    </div>
+</body>
+
+</html>
